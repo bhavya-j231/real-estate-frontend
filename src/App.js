@@ -43,7 +43,7 @@ function App() {
       setFormData({ image: null, userName: '', location: '', rating: 0 });
       setPreview(null);
     } else {
-      alert('Upload failed.');
+      alert('Upload failed : ${errorData.error}'); // handles the errors using specific error message from backend
     }
   };
 
