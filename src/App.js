@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Box, Card, CardContent, CardMedia, Rating, Grid } from '@mui/material';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Rating,
+  Grid
+} from '@mui/material';
 
 function App() {
   const [formData, setFormData] = useState({
@@ -8,93 +19,67 @@ function App() {
     location: '',
     rating: 0
   });
-  const [listings, setListings] = useState([]);
+
   const [preview, setPreview] = useState(null);
+  const [listings, setListings] = useState([]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      const file = files[0];
-      setFormData({ ...formData, image: file });
-      setPreview(URL.createObjectURL(file)); // preview
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    // handle input changes
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append('image', formData.image);
-    data.append('userName', formData.userName);
-    data.append('location', formData.location);
-    data.append('rating', formData.rating);
-
-    const res = await fetch('http://localhost:3000/api/listings', {
-      method: 'POST',
-      body: data
-    });
-
-    if (res.ok) {
-      alert('Listing uploaded!');
-      fetchListings();
-      setFormData({ image: null, userName: '', location: '', rating: 0 });
-      setPreview(null);
-    } else {
-      alert('Upload failed.');
-    }
+    // handle form submission
   };
 
   const fetchListings = async () => {
-    const res = await fetch('http://localhost:3000/api/listings');
-    const data = await res.json();
-    setListings(data);
+    // fetch listings from backend
   };
 
   useEffect(() => {
-    fetchListings();
+    // fetch data on mount
   }, []);
 
   return (
-    <Container maxWidth="md" sx={{ my: 4 }}>
-      <Typography variant="h4" gutterBottom>Create Listing</Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
-        <Button variant="contained" component="label" sx={{ mb: 2 }}>
-          Upload Image
-          <input type="file" name="image" hidden onChange={handleChange} required />
+    <Container maxWidth="md">
+      <Typography variant="h4">Form Title</Typography>
+      
+      <Box component="form" onSubmit={handleSubmit}>
+        <Button variant="contained" component="label">
+          Upload
+          <input type="file" name="image" hidden onChange={handleChange} />
         </Button>
-        {preview && <Box mb={2}><img src={preview} alt="preview" style={{ maxWidth: '100%', maxHeight: 200 }} /></Box>}
-        <TextField fullWidth name="userName" label="User Name" value={formData.userName} onChange={handleChange} required sx={{ mb: 2 }} />
-        <TextField fullWidth name="location" label="Location" value={formData.location} onChange={handleChange} required sx={{ mb: 2 }} />
+
+        <Box>{/* Image Preview */}</Box>
+
+        <TextField fullWidth name="userName" label="Name" onChange={handleChange} />
+        <TextField fullWidth name="location" label="Location" onChange={handleChange} />
+
         <Typography component="legend">Rating</Typography>
         <Rating
           name="rating"
           value={Number(formData.rating)}
-          precision={0.5}
-          onChange={(event, newValue) => setFormData({ ...formData, rating: newValue || 0 })}
-          sx={{ mb: 2 }}
-          required
+          onChange={(event, newValue) => {}}
         />
-        <Button type="submit" variant="contained" color="primary">Submit</Button>
+
+        <Button type="submit" variant="contained">Submit</Button>
       </Box>
 
-      <Typography variant="h4" gutterBottom>All Listings</Typography>
+      <Typography variant="h4">Listings</Typography>
       <Grid container spacing={2}>
-        {listings.map((listing) => (
-          <Grid item xs={12} sm={6} key={listing.id}>
+        {listings.map((item) => (
+          <Grid item xs={12} sm={6} key={item.id}>
             <Card>
-              {listing.imagePath && (
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={`http://localhost:3000/${listing.imagePath}`}
-                  alt={listing.userName}
-                />
-              )}
+              <CardMedia
+                component="img"
+                height="140"
+                image={'#'}
+                alt="preview"
+              />
               <CardContent>
-                <Typography variant="h6">{listing.userName}</Typography>
-                <Typography color="text.secondary">{listing.location}</Typography>
-                <Rating value={listing.rating} readOnly precision={0.5} />
+                <Typography variant="h6">User Name</Typography>
+                <Typography>Location</Typography>
+                <Rating value={0} readOnly />
               </CardContent>
             </Card>
           </Grid>
